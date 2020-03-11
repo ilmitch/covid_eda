@@ -1,0 +1,18 @@
+'''
+Legend
+[] open
+[-] on-going
+[X] completed
+[d] discarded
+[?] unclear, questionable
+> comment, statement, summary, outcome, conclusion, outlook
+'''
+
+
+[-] back-end
+    [] data scraping
+
+[] front-end
+    []
+    []
+    []
