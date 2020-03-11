@@ -2,4 +2,4 @@
 .project
 .vscode
 .pyc
-.ipynb_checkpoints/
+.ipynb_checkpoints
