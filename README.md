@@ -9,3 +9,6 @@ Log scale visualisation are produced.
 The notebook is updated daily with the latest available dataset.
 
 The use of this notebook requires knowledge in python and pandas.
+
+Example:
+![alt text](https://github.com/ilmitch/covid_eda/blob/master/backend/working/_output/pics/cumsum_cases.png "Cumulative Sum Confirmed Cases")
