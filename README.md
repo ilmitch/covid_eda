@@ -8,4 +8,4 @@ Log scale visualisation are produced.
 
 The notebook is updated daily with the latest available dataset.
 
-The usa of this notebook requires knowledge in python and pandas.
+The use of this notebook requires knowledge in python and pandas.
