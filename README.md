@@ -19,5 +19,5 @@ Example 2, Cumulative Confirmed Cases, from 100 cases:
 Example 3, Per Capita Cumulative Confirmed Cases, from 1 every million cases:
 ![alt text](https://github.com/ilmitch/covid_eda/blob/master/backend/working/_output/pics/cumsum_cases_capita.png "Per Capita Cumulative Confirmed Cases")
 
-Example 4, Highest Per Capita Cumulative Confirmed Cases, from 1 every 100'000 cases:
+Example 4, Countries with Highest Per Capita Cumulative Confirmed Cases, from 1 every 100'000 cases:
 ![alt text](https://github.com/ilmitch/covid_eda/blob/master/backend/working/_output/pics/cumsum_cases_capita_high.png "Highest Per Capita Cumulative Confirmed Cases")
