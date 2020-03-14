@@ -1,4 +1,4 @@
-# COVID-19 Explorative Analysis
+# COVID-19, Explorative Data Analysis and Visualization
 
 Currently a simple Jupyter Notebook for expolorative data analysis based on a COVID dataset provided by the [European Centre for Disease Prevention and Control](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide)
 
