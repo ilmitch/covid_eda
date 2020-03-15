@@ -18,19 +18,32 @@ w_df_filepath = "../../backend/working/_output/pckl/covid_df.pckl"
 app = dash.Dash()
 
 app.layout = html.Div([
-                    html.H1('COVID-19 | Explorative Data Visualization'),
-                    html.H3('Enter a country name:'),
-
-                    dcc.Input(id='my_data_picker', value='Switzerland'),
-
-                    dcc.Graph(id='my_graph', 
-                              figure={
-                                  'title':'Total Confirmed Cases',
-                                  'data':[{'x':[1,2], 'y':[3,1]}],
-                                  'layout' : [{'title':'Total Confirmed Cases (daily cumulative sum)'}]
-                                  }
-                              )
-                    ])
+    html.H1('COVID-19 | Explorative Data Visualization'),
+    html.Div([
+        html.H3('Enter a country name:', style={'paddingRight':'30px'}),
+        dcc.Input(
+            id='my_data_picker', 
+            value='Switzerland',
+            style={'fontSize':16,'width':75})
+            ],
+        style={'display':'inline-block', 'verticalAlign':'top'}),
+    html.Div([
+        html.H3('Select a start and end date:'),
+        dcc.DatePickerRange(
+            id='my_date_picker',
+            min_date_allowed=date(2020,1,1),
+            max_date_allowed=date.today(),
+            )
+        ]),
+    dcc.Graph(
+        id='my_graph', 
+        figure={
+            'title':'Total Confirmed Cases',
+            'data':[{'x':[1,2], 'y':[3,1]}],
+            'layout' : [{'title':'Total Confirmed Cases (daily cumulative sum)'}]
+            }
+        )
+    ])
 
 
 @app.callback(Output('my_graph', 'figure'),[Input('my_data_picker','value')])
