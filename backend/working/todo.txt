@@ -10,9 +10,28 @@ Legend
 
 
 [-] back-end
-    [] data scraping
+    [] data scraping with Selenium
+    [-] raw data to DataFrame
+        [X] cumsum
+        [X] growth factor
+        [X] daily new cases, difference
+    [-] EDA
+        [-] summary
+            [X] total worldwide count
+            [] others
+
+        [-] visualizations
+            [X] From Day One (day of first confirmed case)
+            [X] logy scaled cumsum plots
+            [X] simple count
+            [X] per capita
+                [X] join population data
+
+            [] geographical plotting
+
+    [] re-organize in a class
 
 [] front-end
-    []
+    [] Plotly
     []
     []

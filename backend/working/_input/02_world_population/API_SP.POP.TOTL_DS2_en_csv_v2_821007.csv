@@ -1,11 +1,1 @@
-# COVID-19, Explorative Data Analysis and Visualisation
-
-Currently a simple Jupyter Notebook for exploitative data analysis based on a COVID dataset provided by the [European Centre for Disease Prevention and Control](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide)
-
-Cumulative sum and growth factor for confirmed cases and death are computed.
-
-Log scale visualisation are produced.
-
-The notebook is updated daily with the latest available dataset.
-
-The usa of this notebook requires knowledge in python and pandas.
+Inspired by your video, I have created a repository on GitHub (https://github.com/ilmitch/covid_eda) with a Jupyter Notebook providing some basic explorative data analysis and visualisations based on the "European Centre for Disease Prevention and Control" COVID dataset. I also computed the growth factor explained in your video. I was surprised by his noisy behaviour, in particular if compared to the theoretical case. I fear it may not be a reliable indicator to detect the end of the pandemic.
