@@ -33,5 +33,7 @@ Legend
 
 [-] front-end
     [-] Plotly
-        [] how to handle situation where the requested country doesn't meet the threshold
-    [] deployment
+        [d] how to handle situation where the requested country doesn't meet the threshold
+            > for the moment no need to handle it
+    [-] deployment
+        [] heroku, installer not working, try brew []
