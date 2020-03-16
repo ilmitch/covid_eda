@@ -25,56 +25,55 @@ countries_filepath = "../../backend/working/_output/pckl/countries_lst.pckl"
 #countries_filepath = "/Users/Michele/Documents/Python/04_Projects/2020_03_Covid_EDA/backend/working/_output/pckl/countries_lst.pckl"
 
 # loading list of countries
+# for html.Button, appending dicts, {'label':'value'}, {'user sees':'script sees'}
 with open(countries_filepath, 'rb') as f:
      countries_lst = pickle.load(f)
-# for html.Button, appending dicts, {'label':'value'}, {'user sees':'script sees'}
+    
 countries = [{'label':country, 'value':country} for country in countries_lst]
 
 
-def post_country_dayone(df, thresh=1, countries=['Switzerland', 'Italy', 'France', 'Germany', 'United Kingdom', 'South Korea', 'China', 'Poland', 'Russia', 'United States Of America'], legend=True, lw=4, clmn_name='w_NewConfCases'):
+def post_country_dayone(df, thresh=1, countries=['Switzerland', 'Italy', 'France', 'Germany', 'United Kingdom', 'South Korea', 'China', 'Poland', 'Russia', 'United States Of America'], clmn_name='w_NewConfCases'):
     '''
-    Prepare DataFrame for visualization for the specified country
+    Prepare DataFrame for visualization of the specified country
 
     Params:
     -------
     df: pandas DataFrame, COVID dataframe
     thresh: int, min number of cumulative cases for plotting; if not met, the country is skipped
     countries: list, list of countries to plot
+    clmn_name: 'w_NewConfCases' for per capita data or 'NewConfCases' for cumulative data
     
     Return: 
     -------
+    df_dict: DataFrame relative to the country key
     '''
-
     df_dict = {}
 
     if thresh > 1:
         thresh = thresh-1
-
     else:
         pass
     
     for country in countries:
-    
         c_df = df.loc[country, idx[:,clmn_name]]
-        
         #checking if the specific country has reached thresh
         if (c_df['cumsum'].sum(axis=1)>thresh).sum()>0:
-            date_first_case = (c_df['cumsum'].sum(axis=1)>thresh).idxmax() #identifying first date with 1 case
+            date_first_case = (c_df['cumsum'].sum(axis=1)>thresh).idxmax() #identifying date with first case
             
             days = c_df.loc[date_first_case:,'cumsum'].size
             c_cumsum_df = c_df.loc[date_first_case:,'cumsum']
             c_cumsum_df['day'] = np.arange(1,days+1,1)
             c_cumsum_df = c_cumsum_df.reset_index().set_index(['day'])[[clmn_name]].rename({clmn_name:country})
+            
             if thresh<1.:
                 # in case it is a per capita value, then scale it for visulization, else keep as it is
                 c_cumsum_df = c_cumsum_df / thresh # e.g. thresh = 1.e-6 -> case per million inhabitants
+
             df_dict.update({country : c_cumsum_df})
 
     return df_dict
 
-
-
-
+# Styling
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
