@@ -3,4 +3,4 @@
 .vscode
 .pyc
 .ipynb_checkpoints
-./deploy
+/deploy/*
