@@ -31,7 +31,7 @@ Legend
 
     [] re-organize in a class
 
-[] front-end
-    [] Plotly
-    []
-    []
+[-] front-end
+    [-] Plotly
+        [] how to handle situation where the requested country doesn't meet the threshold
+    [] deployment

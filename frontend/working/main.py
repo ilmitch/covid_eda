@@ -16,18 +16,18 @@ import plotly.graph_objs as go
 #
 # INPUT DATA ---------------
 #
-# pickle filepaths
+# pickle filepaths; relative for deployement and absolute for debugging
 df_filepath = "../../backend/working/_output/pckl/covid_df.pckl"
-df_filepath = "/Users/Michele/Documents/Python/04_Projects/2020_03_Covid_EDA/backend/working/_output/pckl/countries_lst.pckl"
+#df_filepath = "/Users/Michele/Documents/Python/04_Projects/2020_03_Covid_EDA/backend/working/_output/pckl/covid_df.pckl"
 w_df_filepath = "../../backend/working/_output/pckl/covid_per_capita_df.pckl"
-w_df_filepath = "/Users/Michele/Documents/Python/04_Projects/2020_03_Covid_EDA/backend/working/_output/pckl/covid_per_capita_df.pckl"
+#w_df_filepath = "/Users/Michele/Documents/Python/04_Projects/2020_03_Covid_EDA/backend/working/_output/pckl/covid_per_capita_df.pckl"
 countries_filepath = "../../backend/working/_output/pckl/countries_lst.pckl"
-countries_filepath = "/Users/Michele/Documents/Python/04_Projects/2020_03_Covid_EDA/backend/working/_output/pckl/countries_lst.pckl"
+#countries_filepath = "/Users/Michele/Documents/Python/04_Projects/2020_03_Covid_EDA/backend/working/_output/pckl/countries_lst.pckl"
 
 # loading list of countries
 with open(countries_filepath, 'rb') as f:
      countries_lst = pickle.load(f)
-#appending dicts, {'label':'value'}, {'user sees':'script sees'}
+# for html.Button, appending dicts, {'label':'value'}, {'user sees':'script sees'}
 countries = [{'label':country, 'value':country} for country in countries_lst]
 
 
@@ -47,7 +47,7 @@ def post_country_dayone(df, thresh=1, countries=['Switzerland', 'Italy', 'France
 
     df_dict = {}
 
-    if thresh >= 1:
+    if thresh > 1:
         thresh = thresh-1
 
     else:
@@ -65,7 +65,9 @@ def post_country_dayone(df, thresh=1, countries=['Switzerland', 'Italy', 'France
             c_cumsum_df = c_df.loc[date_first_case:,'cumsum']
             c_cumsum_df['day'] = np.arange(1,days+1,1)
             c_cumsum_df = c_cumsum_df.reset_index().set_index(['day'])[[clmn_name]].rename({clmn_name:country})
-            c_cumsum_df = c_cumsum_df / thresh # e.g. thresh = 1.e-6 -> case per million inhabitants
+            if thresh<1.:
+                # in case it is a per capita value, then scale it for visulization, else keep as it is
+                c_cumsum_df = c_cumsum_df / thresh # e.g. thresh = 1.e-6 -> case per million inhabitants
             df_dict.update({country : c_cumsum_df})
 
     return df_dict
@@ -73,13 +75,17 @@ def post_country_dayone(df, thresh=1, countries=['Switzerland', 'Italy', 'France
 
 
 
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-
-app = dash.Dash()
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
     html.H1('COVID-19 | Explorative Data Visualization'),
-
+    
+    dcc.Markdown(
+        'Explorative data analysis and visualizations based on a COVID-19 dataset provided by the [European Centre for Disease Prevention and Control](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide).'
+        ),
+    
     html.Div([
         html.H3('Enter a country name:', style={'paddingRight':'30px'}),
         dcc.Dropdown(
@@ -88,18 +94,7 @@ app.layout = html.Div([
             value=['Switzerland', 'Italy', 'Germany', 'France'],
             multi=True
             )],
-        style={'display':'inline-block', 'verticalAlign':'top', 'width':'30%'}),
-
-    # html.Div([
-    #     html.H3('Select a start and end date:'),
-    #     dcc.DatePickerRange(
-    #         id='my_date_picker',
-    #         min_date_allowed=date(2019,12,31),
-    #         max_date_allowed=date.today(),
-    #         start_date=date(2020,1,1),
-    #         end_date=date.today() 
-    #         )], 
-    #     style={'display':'inline-block'}),
+        style={'display':'inline-block', 'verticalAlign':'top', 'width':'50%'}),
 
     html.Div([
         html.Button(
@@ -112,52 +107,103 @@ app.layout = html.Div([
         ),
 
     dcc.Graph(
-        id='my_graph', 
+        id='my_graph_capita', 
         figure={
             'data':[{'x':[1,2], 'y':[1,1]}]
             }
-        )
+        ),
+    dcc.Graph(
+        id='my_graph_total', 
+        figure={
+            'data':[{'x':[1,2], 'y':[1,2]}]
+            }
+        ),
+
+    dcc.Markdown(
+        '`All information on this page is of unofficial nature and may contain error.\nNo liability for the correctness of the data is provided.\nOfficial data and information can be found on official sources websites.`'
+        ),
+
+    dcc.Markdown(
+        'March 2020, [https://github.com/ilmitch/](https://github.com/ilmitch/)'
+        ),
+    dcc.Markdown(""),
     ])
 
-
+#
+# PER CAPITA 
+#
 @app.callback(
-    Output('my_graph', 'figure'),
+    Output('my_graph_capita', 'figure'),
     [Input('submit-button', 'n_clicks')],
     [State('my_country_picker', 'value')])
-def update_graph(n_clicks, country_ticker):
+def update_graph_capita(n_clicks, country_ticker):
     '''
-    Update plot data for specified country and date range
+    Update data for per capita cumulative plot for specified country
     '''
 
     curves = []
 
     df = pd.read_pickle(w_df_filepath)
-    df_dict = post_country_dayone(df, thresh=1e-6, countries=country_ticker)
+    df_dict = post_country_dayone(df, thresh=1e-6, countries=country_ticker, clmn_name='w_NewConfCases')
 
     for key, value in df_dict.items():
         country = key
-        x = value.index.values #date list
-        y = value['w_NewConfCases'].values #pd.Series values
-        #dates_lst = [item[1] for item in c_df.index]
+        x = value.index.values #date array
+        y = value['w_NewConfCases'].values #pd.Series values array
         curves.append({'x':x, 'y':y, 'name':country})
 
     # Slicing data per input country
     fig = {
-            #'data':[{'x':dates_lst, 'y':list(c_df.values)}],
             'data':curves,
             'layout': 
                 go.Layout(
-                    title="Total Confirmed Cases (per million inhabitants)",
+                    title="Per Capita Total Confirmed Cases (per million inhabitants)",
                     yaxis={
                         'title': 'Total Confirmed Cases',
-                        'type': 'linear'
+                        'type': 'log'
                         },
                     xaxis={'title': 'Days From First Confirmed Case'},
-                    #margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
                     hovermode='closest'
             )}
     return fig
 
+#
+# CUMULATIVE 
+#
+@app.callback(
+    Output('my_graph_total', 'figure'),
+    [Input('submit-button', 'n_clicks')],
+    [State('my_country_picker', 'value')])
+def update_graph_total(n_clicks, country_ticker):
+    '''
+    Update data for cumulative plot for specified country
+    '''
+
+    curves = []
+
+    df = pd.read_pickle(df_filepath)
+    df_dict = post_country_dayone(df, thresh=100., countries=country_ticker, clmn_name='NewConfCases')
+
+    for key, value in df_dict.items():
+        country = key
+        x = value.index.values #date array
+        y = value['NewConfCases'].values #pd.Series values array
+        curves.append({'x':x, 'y':y, 'name':country})
+
+    # Slicing data per input country
+    fig = {
+            'data':curves,
+            'layout': 
+                go.Layout(
+                    title="Total Confirmed Cases (from 100 cases)",
+                    yaxis={
+                        'title': 'Total Confirmed Cases',
+                        'type': 'log'
+                        },
+                    xaxis={'title': 'Days From First Confirmed Case'},
+                    hovermode='closest'
+            )}
+    return fig
 
 if __name__ == '__main__':
     app.run_server()
