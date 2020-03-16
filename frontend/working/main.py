@@ -33,7 +33,8 @@ countries = [{'label':country, 'value':country} for country in countries_lst]
 
 def post_country_dayone(df, thresh=1, countries=['Switzerland', 'Italy', 'France', 'Germany', 'United Kingdom', 'South Korea', 'China', 'Poland', 'Russia', 'United States Of America'], legend=True, lw=4, clmn_name='w_NewConfCases'):
     '''
-    
+    Prepare DataFrame for visualization for the specified country
+
     Params:
     -------
     df: pandas DataFrame, COVID dataframe
@@ -64,7 +65,7 @@ def post_country_dayone(df, thresh=1, countries=['Switzerland', 'Italy', 'France
             c_cumsum_df = c_df.loc[date_first_case:,'cumsum']
             c_cumsum_df['day'] = np.arange(1,days+1,1)
             c_cumsum_df = c_cumsum_df.reset_index().set_index(['day'])[[clmn_name]].rename({clmn_name:country})
-            
+            c_cumsum_df = c_cumsum_df / thresh # e.g. thresh = 1.e-6 -> case per million inhabitants
             df_dict.update({country : c_cumsum_df})
 
     return df_dict
@@ -105,9 +106,10 @@ app.layout = html.Div([
             id='submit-button',
             n_clicks=0,
             children='Submit',
-            style={'fontSize':16, 'marginLeft':'30px'}
+            style={'fontSize':16, 'marginTop' : '30px', 'margin':'30px'}
             )],
-        style={'display':'inline-block'}),
+        #style={'display':'inline-block'}
+        ),
 
     dcc.Graph(
         id='my_graph', 
@@ -145,10 +147,12 @@ def update_graph(n_clicks, country_ticker):
             'data':curves,
             'layout': 
                 go.Layout(
+                    title="Total Confirmed Cases (per million inhabitants)",
                     yaxis={
                         'title': 'Total Confirmed Cases',
                         'type': 'linear'
                         },
+                    xaxis={'title': 'Days From First Confirmed Case'},
                     #margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
                     hovermode='closest'
             )}
