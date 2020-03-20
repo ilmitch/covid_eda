@@ -36,4 +36,19 @@ Legend
         [d] how to handle situation where the requested country doesn't meet the threshold
             > for the moment no need to handle it
     [-] deployment
-        [] heroku, installer not working, try brew []
+        [d] heroku, installer not working, try brew [d]
+        or
+        [X] virtualbox with Ubuntu
+
+    [] Title with color scheme magenta electric green
+    
+    [] side bars to other pages
+
+    [] other NZZ style plots
+
+        [] compute growth rate
+        [] bar plot with hue representing grow rate
+        [] auto sets
+            [] > 1million population
+            [] radio button switch Confirmed Cases / Deaths
+            [] countries with highest rate after 100 cases
